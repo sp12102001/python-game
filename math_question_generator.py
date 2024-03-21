@@ -7,7 +7,12 @@ def generate_math_question():
 
     # Generate two random numbers
     num1 = random.randint(1, 10)
-    num2 = random.randint(1, 10) if operation != '/' else random.randint(1, 10) while num2 == 0  # Avoid division by zero
+    num2 = random.randint(1, 10)
+    
+    # Ensure num2 is not 0 when operation is division
+    if operation == '/':
+        while num2 == 0:
+            num2 = random.randint(1, 10)
 
     # Generate the question string
     question = f"{num1} {operation} {num2}"
