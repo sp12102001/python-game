@@ -1,4 +1,5 @@
-import random
+import random # import the random module
+import time  # import the time module
 from math_question_generator import generate_math_question, increase_difficulty
 from scoring_system import calculate_score
 
