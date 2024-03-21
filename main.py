@@ -12,6 +12,7 @@ ANSI_RED = '\033[91m'  # Red for incorrect answers by the human player
 ANSI_BLUE = '\033[94m'  # Blue for correct answers by the computer
 ANSI_RESET = '\033[0m'
 ANSI_BOLD = '\033[1m'
+ANSI_WHITE_ON_BLUE = '\033[97;44m'  # White text on blue background for the question
 
 def computer_play(difficulty_level):
     accuracy_threshold = max(0.2, 0.75 - (difficulty_level * 0.03))
@@ -34,7 +35,8 @@ def main():
         question, correct_answer = generate_math_question(difficulty_level)
         computer_correct, computer_thinking_time = computer_play(difficulty_level)
 
-        print(f"Question: {question}")
+        # Highlight the question with white text on blue background
+        print(ANSI_WHITE_ON_BLUE + f"Question: {question}" + ANSI_RESET)
         start_time = time.perf_counter()
         player_answer = input("Your answer (within 10 seconds): ")
         end_time = time.perf_counter()
