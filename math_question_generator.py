@@ -1,26 +1,23 @@
 import random
 
-def generate_math_question():
-    # Define the operations
-    operations = ['+', '-', '*', '/']
+def generate_math_question(difficulty_level):
+    operations = ['+', '-', '*', '/', '**'] if difficulty_level > 2 else ['+', '-', '*', '/']
     operation = random.choice(operations)
 
-    # Generate two random numbers
-    num1 = random.randint(1, 10)
-    num2 = random.randint(1, 10)
+    max_num = 10 + (difficulty_level * 5)  # Increase the range of numbers as difficulty increases
+    num1 = random.randint(1, max_num)
+    num2 = random.randint(1, max_num)
     
-    # Ensure num2 is not 0 when operation is division
     if operation == '/':
         while num2 == 0:
-            num2 = random.randint(1, 10)
+            num2 = random.randint(1, max_num)
+    elif operation == '**':
+        num2 = random.randint(1, 3)  # Keep exponent small for simplicity
 
-    # Generate the question string
     question = f"{num1} {operation} {num2}"
-
-    # Calculate the correct answer
-    correct_answer = eval(question)
-
-    # Round the answer to 2 decimal places if necessary
-    correct_answer = round(correct_answer, 2)
+    correct_answer = round(eval(question), 2)
 
     return question, correct_answer
+
+def increase_difficulty(level):
+    return level + 1
