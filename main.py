@@ -4,7 +4,7 @@ from math_question_generator import generate_math_question, increase_difficulty
 from scoring_system import calculate_score
 from configurator import choose_difficulty, choose_operations
 
-# ANSI escape codes for colors and styles
+# ANSI escape codes for colors, styles, and flashing text
 ANSI_CYAN = '\033[96m'
 ANSI_GREEN = '\033[92m'  # Green for correct answers by the human player
 ANSI_YELLOW = '\033[93m'
@@ -14,12 +14,33 @@ ANSI_BLUE = '\033[94m'  # Blue for correct answers by the computer
 ANSI_RESET = '\033[0m'
 ANSI_BOLD = '\033[1m'
 ANSI_WHITE_ON_BLUE = '\033[97;44m'  # White text on blue background for the question
+ANSI_FLASH = '\033[5m'  # Flashing text ANSI code
+
+# ASCII art banner for the game start
+game_banner = """
+ _   _      _   _                 _             
+| \ | |    | | (_)               | |            
+|  \| | ___| |_ _  ___  _ __   __| | ___  _ __  
+| . ` |/ _ \ __| |/ _ \| '_ \ / _` |/ _ \| '_ \ 
+| |\  |  __/ |_| | (_) | | | | (_| | (_) | | | |
+\_| \_/\___|\__|_|\___/|_| |_|\__,_|\___/|_| |_|
+"""
+print(ANSI_CYAN + game_banner + ANSI_RESET)
 
 def computer_play(difficulty_level):
     accuracy_threshold = max(0.2, 0.75 - (difficulty_level * 0.03))
     is_correct = random.random() < accuracy_threshold
     thinking_time = random.uniform(0.5, 2.0)
     return is_correct, thinking_time
+
+def adjust_difficulty_based_on_performance(total_score, total_computer_score, difficulty_level):
+    if total_score > total_computer_score + 5:  # Player is significantly outperforming the computer
+        difficulty_level = min(difficulty_level + 1, 3)  # Increase difficulty
+        print(f"{ANSI_FLASH}Increasing difficulty to challenge you more!{ANSI_RESET}")
+    elif total_computer_score > total_score + 5:  # Adjust if the computer is winning
+        difficulty_level = max(difficulty_level - 1, 1)  # Decrease difficulty
+        print(f"{ANSI_FLASH}Adjusting difficulty. Keep trying!{ANSI_RESET}")
+    return difficulty_level
 
 def main():
     print(ANSI_CYAN + "Welcome to the Maths Quiz Game!" + ANSI_RESET)
@@ -32,13 +53,12 @@ def main():
     operations = choose_operations()
     print(f"Hi {ANSI_BOLD}{player_name}{ANSI_RESET}, let's start the quiz!")
     
-    total_score, total_computer_score, difficulty_level = 0, 0, 1
+    total_score, total_computer_score = 0, 0
 
     while True:
-        question, correct_answer = generate_math_question(difficulty_level)
+        question, correct_answer = generate_math_question(difficulty_level, operations)
         computer_correct, computer_thinking_time = computer_play(difficulty_level)
 
-        # Highlight the question with white text on blue background
         print(ANSI_WHITE_ON_BLUE + f"Question: {question}" + ANSI_RESET)
         start_time = time.perf_counter()
         player_answer = input("Your answer (within 10 seconds): ")
@@ -72,12 +92,11 @@ def main():
         total_computer_score += computer_score
         print(f"Computer's score for this question: {computer_score}.")
 
+        difficulty_level = adjust_difficulty_based_on_performance(total_score, total_computer_score, difficulty_level)
+
         if input("Play another question? (y/n): ").lower() != 'y':
+            print(ANSI_CYAN + f"Game over! Your total score is {total_score}. Computer's total score is {total_computer_score}. Thank you for playing, {player_name}!" + ANSI_RESET)
             break
-
-        difficulty_level = increase_difficulty(difficulty_level) if player_correct else difficulty_level
-
-    print(ANSI_CYAN + f"Game over! Your total score is {total_score}. Computer's total score is {total_computer_score}. Thank you for playing, {player_name}!" + ANSI_RESET)
 
 if __name__ == "__main__":
     main()
