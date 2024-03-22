@@ -2,6 +2,7 @@ import random
 import time
 from math_question_generator import generate_math_question, increase_difficulty
 from scoring_system import calculate_score
+from configurator import choose_difficulty, choose_operations
 
 # ANSI escape codes for colors and styles
 ANSI_CYAN = '\033[96m'
@@ -27,8 +28,10 @@ def main():
         return
 
     player_name = input("What's your name? ")
+    difficulty_level = choose_difficulty()
+    operations = choose_operations()
     print(f"Hi {ANSI_BOLD}{player_name}{ANSI_RESET}, let's start the quiz!")
-
+    
     total_score, total_computer_score, difficulty_level = 0, 0, 1
 
     while True:
